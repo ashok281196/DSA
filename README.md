@@ -757,3 +757,261 @@
    - **Difficulty:** Hard
    - **URL:** https://leetcode.com/problems/binary-tree-maximum-path-sum/
 
+# Graph Problems (Sorted by Difficulty)
+
+1. 🟢 **Number of Provinces**
+   - Find number of connected components in an undirected graph.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/number-of-provinces/
+
+2. 🟢 **Flood Fill**
+   - Perform DFS/BFS flood fill on a 2D image.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/flood-fill/
+
+3. 🟢 **01 Matrix**
+   - Find the distance of the nearest 0 for each cell.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/01-matrix/
+
+4. 🟢 **Island Perimeter**
+   - Find the perimeter of an island in the grid.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/island-perimeter/
+
+5. 🟢 **Max Area of Island**
+   - Find the area of the largest island.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/max-area-of-island/
+
+6. 🟢 **Graph Valid Tree**
+   - Check if an undirected graph is a valid tree.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/graph-valid-tree/
+
+7. 🟢 **Find Center of Star Graph**
+   - Return the center node of a star graph.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/find-center-of-star-graph/
+
+8. 🟢 **DFS of Graph**
+   - Implement DFS traversal of a graph.
+   - **Difficulty:** Easy
+   - **URL:** https://practice.geeksforgeeks.org/problems/depth-first-traversal-for-a-graph/1
+
+9. 🟢 **BFS of Graph**
+   - Implement BFS traversal of a graph.
+   - **Difficulty:** Easy
+   - **URL:** https://practice.geeksforgeeks.org/problems/bfs-traversal-of-graph/1
+
+10. 🟢 **Find the Town Judge**
+   - Identify the judge who trusts no one.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/find-the-town-judge/
+
+11. 🟢 **Max Area of Island (V2)**
+   - DFS/BFS island maximum area variant.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/max-area-of-island/
+
+12. 🟢 **Connected Components in Undirected Graph**
+   - Return number of connected components.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/number-of-provinces/
+
+13. 🟠 **Course Schedule**
+   - Check if you can complete all courses (cycle detection in directed graph).
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/course-schedule/
+
+14. 🟠 **Course Schedule II**
+   - Return order of courses to take using topological sort.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/course-schedule-ii/
+
+15. 🟠 **Rotting Oranges**
+   - Find minimum minutes to rot all oranges.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/rotting-oranges/
+
+16. 🟠 **Snakes and Ladders**
+   - Find minimum number of moves to reach end.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/snakes-and-ladders/
+
+17. 🟠 **Walls and Gates**
+   - Find distance to the nearest gate in rooms grid.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/walls-and-gates/
+
+18. 🟠 **Network Delay Time**
+   - Time it takes for all nodes to receive a signal (Dijkstra).
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/network-delay-time/
+
+19. 🟠 **Shortest Path in Binary Matrix**
+   - Find the shortest path in a binary matrix.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/shortest-path-in-binary-matrix/
+
+20. 🟠 **Is Graph Bipartite?**
+   - Check if a graph can be bipartitioned.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/is-graph-bipartite/
+
+21. 🟠 **Clone Graph**
+   - Clone a connected undirected graph.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/clone-graph/
+
+22. 🟠 **All Paths From Source to Target**
+   - Find all paths from node 0 to n - 1.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/all-paths-from-source-to-target/
+
+23. 🟠 **Redundant Connection**
+   - Find the edge that, when removed, makes the graph a tree.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/redundant-connection/
+
+24. 🟠 **Find Eventual Safe States**
+   - Return all safe nodes in a graph.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/find-eventual-safe-states/
+
+25. 🟠 **Evaluate Division**
+   - Evaluate queries using division relationships (DFS/BFS).
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/evaluate-division/
+
+26. 🟠 **Minimum Height Trees**
+   - Find all possible roots for a minimum height tree.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/minimum-height-trees/
+
+27. 🟠 **Reorder Routes to Make All Paths Lead to the City Zero**
+   - Reorder edges to ensure all nodes can reach node 0.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/reorder-routes-to-make-all-paths-lead-to-the-city-zero/
+
+28. 🟠 **Accounts Merge**
+   - Merge accounts using union-find.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/accounts-merge/
+
+29. 🟠 **Minimum Genetic Mutation**
+   - Find minimum mutations to reach the end gene.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/minimum-genetic-mutation/
+
+30. 🟠 **Word Ladder**
+   - Transform word into another with minimum steps.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/word-ladder/
+
+31. 🟠 **Open the Lock**
+   - Unlock the lock using shortest transformation.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/open-the-lock/
+
+32. 🟠 **Ladder Length**
+   - Return the length of shortest transformation sequence.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/word-ladder/
+
+33. 🟠 **Path With Minimum Effort**
+   - Minimum effort path in matrix.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/path-with-minimum-effort/
+
+34. 🟠 **Find the City With the Smallest Number of Neighbors**
+   - Dijkstra from each node and return city with fewest reachable cities.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/
+
+35. 🟠 **Cheapest Flights Within K Stops**
+   - Find the cheapest flight within K stops.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/cheapest-flights-within-k-stops/
+
+36. 🟠 **The Maze**
+   - Find if a ball can stop at destination.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/the-maze/
+
+37. 🟠 **The Maze II**
+   - Shortest distance for ball to stop at destination.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/the-maze-ii/
+
+38. 🟠 **Find All Groups of Farmland**
+   - Find all groups of 1s (DFS/BFS).
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/find-all-groups-of-farmland/
+
+39. 🟠 **Pacific Atlantic Water Flow**
+   - Find all coordinates where water can flow to both oceans.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/pacific-atlantic-water-flow/
+
+40. 🟠 **Union Find with Path Compression**
+   - Learn & implement efficient union-find.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/accounts-merge/
+
+41. 🟠 **Disjoint Set Union (DSU) + Union by Rank**
+   - Optimized union-find using rank/size.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/redundant-connection/
+
+42. 🟠 **Prim’s MST**
+   - Learn how to build MST using Prim’s algorithm.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/min-cost-to-connect-all-points/
+
+43. 🟠 **Kruskal’s MST**
+   - Use union-find to build MST.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/connecting-cities-with-minimum-cost/
+
+44. 🔴 **Word Ladder II**
+   - Return all shortest transformation sequences.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/word-ladder-ii/
+
+45. 🔴 **Alien Dictionary**
+   - Find the order of letters in an alien language.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/alien-dictionary/
+
+46. 🔴 **Find Critical and Pseudo-Critical Edges**
+   - Identify critical edges in MST.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/
+
+47. 🔴 **Minimum Cost to Make at Least One Valid Path in a Grid**
+   - Change directions in grid with minimal cost.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/minimum-cost-to-make-at-least-one-valid-path-in-a-grid/
+
+48. 🔴 **Swim in Rising Water**
+   - Find minimum time to swim from top-left to bottom-right.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/swim-in-rising-water/
+
+49. 🔴 **The Maze III**
+   - Find lexicographically smallest path to hole.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/the-maze-iii/
+
+50. 🔴 **Bridges in a Graph**
+   - Find all critical bridges in undirected graph (Tarjan).
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/critical-connections-in-a-network/
+
+51. 🔴 **Tarjan’s Bridge Finding**
+   - Find all bridges using Tarjan’s Algorithm.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/critical-connections-in-a-network/
+
+
