@@ -604,3 +604,156 @@
    - Flatten a multilevel doubly linked list.
    - **Difficulty:** Hard
    - **URL:** https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/
+   - 
+# Binary Tree and BST Problems (Sorted by Difficulty)
+
+1. 🟢 **Maximum Depth of Binary Tree**
+   - Find the maximum depth of a binary tree.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/maximum-depth-of-binary-tree/
+
+2. 🟢 **Invert Binary Tree**
+   - Invert a binary tree.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/invert-binary-tree/
+
+3. 🟢 **Diameter of Binary Tree**
+   - Find the diameter of a binary tree.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/diameter-of-binary-tree/
+
+4. 🟢 **Same Tree**
+   - Check if two binary trees are the same.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/same-tree/
+
+5. 🟢 **Symmetric Tree**
+   - Check if a tree is symmetric.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/symmetric-tree/
+
+6. 🟢 **Path Sum**
+   - Check if there is a path with a given sum.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/path-sum/
+
+7. 🟢 **Balanced Binary Tree**
+   - Check if a binary tree is height-balanced.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/balanced-binary-tree/
+
+8. 🟢 **Minimum Depth of Binary Tree**
+   - Find the minimum depth of a binary tree.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/minimum-depth-of-binary-tree/
+
+9. 🟢 **Binary Tree Paths**
+   - Return all root-to-leaf paths.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/binary-tree-paths/
+
+10. 🟢 **Lowest Common Ancestor of a BST**
+   - Find lowest common ancestor in BST.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/
+
+11. 🟢 **Trim a Binary Search Tree**
+   - Trim a BST so that all values lie within a range.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/trim-a-binary-search-tree/
+
+12. 🟢 **Convert Sorted Array to BST**
+   - Convert sorted array to height-balanced BST.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/
+
+13. 🟢 **Range Sum of BST**
+   - Return sum of values between L and R in BST.
+   - **Difficulty:** Easy
+   - **URL:** https://leetcode.com/problems/range-sum-of-bst/
+
+14. 🟠 **Count Complete Tree Nodes**
+   - Count nodes in a complete binary tree.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/count-complete-tree-nodes/
+
+15. 🟠 **Binary Tree Level Order Traversal**
+   - Return level order traversal of a binary tree.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/binary-tree-level-order-traversal/
+
+16. 🟠 **Binary Tree Right Side View**
+   - Return right side view of binary tree.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/binary-tree-right-side-view/
+
+17. 🟠 **Construct Binary Tree from Preorder and Inorder Traversal**
+   - Build binary tree from preorder and inorder traversals.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+
+18. 🟠 **Lowest Common Ancestor of a Binary Tree**
+   - Find lowest common ancestor of two nodes in binary tree.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
+
+19. 🟠 **Binary Tree Zigzag Level Order Traversal**
+   - Zigzag level order traversal of a binary tree.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
+
+20. 🟠 **Populating Next Right Pointers in Each Node**
+   - Populate each node's next pointer to its right.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+
+21. 🟠 **Flatten Binary Tree to Linked List**
+   - Flatten a binary tree to a linked list.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+
+22. 🟠 **Kth Smallest Element in a BST**
+   - Find the k-th smallest element in a BST.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+
+23. 🟠 **Validate Binary Search Tree**
+   - Check if a binary tree is a valid BST.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/validate-binary-search-tree/
+
+24. 🟠 **Delete Node in a BST**
+   - Delete a node from a BST.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/delete-node-in-a-bst/
+
+25. 🟠 **Construct BST from Preorder Traversal**
+   - Build BST from preorder traversal.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/
+
+26. 🟠 **Inorder Successor in BST**
+   - Find inorder successor of a node in BST.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/inorder-successor-in-bst/
+
+27. 🟠 **Balance a Binary Search Tree**
+   - Balance an unbalanced BST.
+   - **Difficulty:** Medium
+   - **URL:** https://leetcode.com/problems/balance-a-binary-search-tree/
+
+28. 🔴 **Serialize and Deserialize Binary Tree**
+   - Serialize and deserialize a binary tree.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
+
+29. 🔴 **Recover Binary Search Tree**
+   - Recover the BST where two nodes are swapped.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/recover-binary-search-tree/
+
+30. 🔴 **Binary Tree Maximum Path Sum**
+   - Find the maximum path sum in a binary tree.
+   - **Difficulty:** Hard
+   - **URL:** https://leetcode.com/problems/binary-tree-maximum-path-sum/
+
