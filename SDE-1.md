@@ -125,16 +125,19 @@ A structured preparation plan for **SDE-1 roles**, covering **DSA, OOP, System F
 - **Tail Recursion**: Space optimization techniques
 
 #### **Backtracking Framework**
-```python
-def backtrack(current_state, choices):
-    if is_valid_solution(current_state):
-        add_to_result(current_state)
-        return
-    
-    for choice in choices:
-        make_choice(choice)
-        backtrack(new_state, new_choices)
-        undo_choice(choice)  # Backtrack
+```cpp
+void backtrack(State& currentState, const std::vector<Choice>& choices, std::vector<State>& results) {
+    if (isValidSolution(currentState)) {
+        results.push_back(currentState);
+        return;
+    }
+
+    for (const auto& choice : choices) {
+        applyChoice(currentState, choice);
+        backtrack(currentState, nextChoices(currentState), results);
+        revertChoice(currentState, choice); // Backtrack
+    }
+}
 ```
 
 #### **🔥 Must-Solve Problems** (20 problems)
@@ -177,18 +180,23 @@ def backtrack(current_state, choices):
 
 #### **Binary Search Mastery**
 - **Template Pattern**:
-```python
-def binary_search(nums, target):
-    left, right = 0, len(nums) - 1
-    while left <= right:
-        mid = left + (right - left) // 2
-        if nums[mid] == target:
-            return mid
-        elif nums[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-    return -1
+```cpp
+int binarySearch(const std::vector<int>& nums, int target) {
+    int left = 0;
+    int right = static_cast<int>(nums.size()) - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            return mid;
+        }
+        if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+}
 ```
 
 #### **Binary Search Variations**
@@ -245,25 +253,40 @@ def binary_search(nums, target):
 - **Pointer Manipulation**: Insertion, deletion, reversal
 
 #### **Essential Patterns**
-```python
-# Dummy node pattern
-dummy = ListNode(0)
-dummy.next = head
-current = dummy
+```cpp
+struct ListNode {
+    int val;
+    ListNode* next;
+    explicit ListNode(int x) : val(x), next(nullptr) {}
+};
 
-# Two pointers pattern
-slow = fast = head
-while fast and fast.next:
-    slow = slow.next
-    fast = fast.next.next
+ListNode* attachDummy(ListNode* head) {
+    auto* dummy = new ListNode(0);
+    dummy->next = head;
+    return dummy;
+}
 
-# Reversal pattern
-prev, current = None, head
-while current:
-    next_temp = current.next
-    current.next = prev
-    prev = current
-    current = next_temp
+ListNode* findMiddle(ListNode* head) {
+    ListNode* slow = head;
+    ListNode* fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    ListNode* current = head;
+    while (current) {
+        ListNode* nextTemp = current->next;
+        current->next = prev;
+        prev = current;
+        current = nextTemp;
+    }
+    return prev;
+}
 ```
 
 #### **🔥 Must-Solve Problems** (16 problems)
@@ -313,41 +336,44 @@ while current:
 - **Cache Implementation**: LRU, LFU caches
 
 #### **Advanced Patterns**
-```python
-# Monotonic Stack (Next Greater Element)
-def next_greater_elements(nums):
-    stack = []
-    result = [-1] * len(nums)
-    
-    for i in range(len(nums)):
-        while stack and nums[stack[-1]] < nums[i]:
-            result[stack.pop()] = nums[i]
-        stack.append(i)
-    
-    return result
+```cpp
+#include <vector>
+#include <stack>
+#include <deque>
 
-# Deque for Sliding Window Maximum
-from collections import deque
+std::vector<int> nextGreaterElements(const std::vector<int>& nums) {
+    std::stack<int> indices;
+    std::vector<int> result(nums.size(), -1);
 
-def max_sliding_window(nums, k):
-    dq = deque()
-    result = []
-    
-    for i in range(len(nums)):
-        # Remove indices outside window
-        while dq and dq[0] <= i - k:
-            dq.popleft()
-        
-        # Remove smaller elements
-        while dq and nums[dq[-1]] <= nums[i]:
-            dq.pop()
-        
-        dq.append(i)
-        
-        if i >= k - 1:
-            result.append(nums[dq[0]])
-    
-    return result
+    for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+        while (!indices.empty() && nums[indices.top()] < nums[i]) {
+            result[indices.top()] = nums[i];
+            indices.pop();
+        }
+        indices.push(i);
+    }
+    return result;
+}
+
+std::vector<int> maxSlidingWindow(const std::vector<int>& nums, int k) {
+    std::deque<int> dq;
+    std::vector<int> result;
+
+    for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+        while (!dq.empty() && dq.front() <= i - k) {
+            dq.pop_front();
+        }
+        while (!dq.empty() && nums[dq.back()] <= nums[i]) {
+            dq.pop_back();
+        }
+        dq.push_back(i);
+
+        if (i >= k - 1) {
+            result.push_back(nums[dq.front()]);
+        }
+    }
+    return result;
+}
 ```
 
 #### **🔥 Must-Solve Problems** (20 problems)
@@ -395,42 +421,74 @@ def max_sliding_window(nums, k):
 - **Tree Construction**: From traversals, from arrays
 
 #### **Essential Algorithms**
-```python
-# Tree Traversals
-def inorder(root):
-    if not root: return []
-    return inorder(root.left) + [root.val] + inorder(root.right)
+```cpp
+#include <vector>
+#include <queue>
 
-def level_order(root):
-    if not root: return []
-    queue = [root]
-    result = []
-    
-    while queue:
-        level_size = len(queue)
-        level = []
-        
-        for _ in range(level_size):
-            node = queue.pop(0)
-            level.append(node.val)
-            
-            if node.left: queue.append(node.left)
-            if node.right: queue.append(node.right)
-        
-        result.append(level)
-    
-    return result
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    explicit TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
 
-# LCA Template
-def lowest_common_ancestor(root, p, q):
-    if not root or root == p or root == q:
-        return root
-    
-    left = lowest_common_ancestor(root.left, p, q)
-    right = lowest_common_ancestor(root.right, p, q)
-    
-    if left and right: return root
-    return left or right
+void inorderTraversal(TreeNode* root, std::vector<int>& result) {
+    if (!root) {
+        return;
+    }
+    inorderTraversal(root->left, result);
+    result.push_back(root->val);
+    inorderTraversal(root->right, result);
+}
+
+std::vector<int> inorder(TreeNode* root) {
+    std::vector<int> result;
+    inorderTraversal(root, result);
+    return result;
+}
+
+std::vector<std::vector<int>> levelOrder(TreeNode* root) {
+    std::vector<std::vector<int>> levels;
+    if (!root) {
+        return levels;
+    }
+    std::queue<TreeNode*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        int levelSize = q.size();
+        std::vector<int> level;
+        level.reserve(levelSize);
+        for (int i = 0; i < levelSize; ++i) {
+            TreeNode* node = q.front();
+            q.pop();
+            level.push_back(node->val);
+
+            if (node->left) {
+                q.push(node->left);
+            }
+            if (node->right) {
+                q.push(node->right);
+            }
+        }
+        levels.push_back(level);
+    }
+    return levels;
+}
+
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if (!root || root == p || root == q) {
+        return root;
+    }
+
+    TreeNode* left = lowestCommonAncestor(root->left, p, q);
+    TreeNode* right = lowestCommonAncestor(root->right, p, q);
+
+    if (left && right) {
+        return root;
+    }
+    return left ? left : right;
+}
 ```
 
 #### **🔥 Must-Solve Problems** (25 problems)
@@ -472,22 +530,25 @@ def lowest_common_ancestor(root, p, q):
 - **AVL/Red-Black Trees**: Self-balancing BSTs
 
 #### **Heap Operations**
-```python
-import heapq
+```cpp
+#include <queue>
+#include <vector>
+#include <algorithm>
 
-# Min Heap (default)
-min_heap = []
-heapq.heappush(min_heap, 5)
-min_val = heapq.heappop(min_heap)
+void heapExamples() {
+    std::priority_queue<int, std::vector<int>, std::greater<int>> minHeap;
+    minHeap.push(5);
+    int minVal = minHeap.top();
+    minHeap.pop();
 
-# Max Heap (negate values)
-max_heap = []
-heapq.heappush(max_heap, -5)
-max_val = -heapq.heappop(max_heap)
+    std::priority_queue<int> maxHeap;
+    maxHeap.push(5);
+    int maxVal = maxHeap.top();
+    maxHeap.pop();
 
-# Heap from list
-nums = [3, 1, 4, 1, 5]
-heapq.heapify(nums)  # O(n) operation
+    std::vector<int> nums{3, 1, 4, 1, 5};
+    std::make_heap(nums.begin(), nums.end()); // O(n) heapify
+}
 ```
 
 #### **⏱️ Time Allocation**: 3-4 weeks
@@ -496,77 +557,102 @@ heapq.heapify(nums)  # O(n) operation
 **🎯 Goal**: Master graph representations, traversals, and shortest path algorithms
 
 #### **Graph Representations**
-```python
-# Adjacency List (Most Common)
-graph = {
-    'A': ['B', 'C'],
-    'B': ['A', 'D'],
-    'C': ['A', 'D'],
-    'D': ['B', 'C']
+```cpp
+#include <unordered_map>
+#include <vector>
+#include <utility>
+
+void graphRepresentations() {
+    std::unordered_map<char, std::vector<char>> adjacencyList{
+        {'A', {'B', 'C'}},
+        {'B', {'A', 'D'}},
+        {'C', {'A', 'D'}},
+        {'D', {'B', 'C'}}
+    };
+
+    const int n = 4;
+    std::vector<std::vector<int>> adjacencyMatrix(n, std::vector<int>(n, 0));
+    adjacencyMatrix[0][1] = 1; // Edge from 0 to 1
+
+    std::vector<std::pair<int, int>> edgeList{{0, 1}, {1, 2}, {2, 3}};
 }
-
-# Adjacency Matrix
-n = 4  # number of vertices
-adj_matrix = [[0] * n for _ in range(n)]
-adj_matrix[0][1] = 1  # Edge from 0 to 1
-
-# Edge List
-edges = [(0, 1), (1, 2), (2, 3)]
 ```
 
 #### **Core Algorithms**
-```python
-# DFS Template
-def dfs(graph, start, visited=None):
-    if visited is None:
-        visited = set()
-    
-    visited.add(start)
-    print(start)
-    
-    for neighbor in graph[start]:
-        if neighbor not in visited:
-            dfs(graph, neighbor, visited)
+```cpp
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+#include <unordered_set>
+#include <queue>
+#include <limits>
+#include <functional>
 
-# BFS Template
-from collections import deque
+using Graph = std::unordered_map<int, std::vector<int>>;
 
-def bfs(graph, start):
-    visited = set()
-    queue = deque([start])
-    visited.add(start)
-    
-    while queue:
-        vertex = queue.popleft()
-        print(vertex)
-        
-        for neighbor in graph[vertex]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
+void dfs(const Graph& graph, int start, std::unordered_set<int>& visited) {
+    if (visited.count(start)) {
+        return;
+    }
+    visited.insert(start);
+    std::cout << start << '\n';
+    for (int neighbor : graph.at(start)) {
+        dfs(graph, neighbor, visited);
+    }
+}
 
-# Dijkstra's Algorithm
-import heapq
+void bfs(const Graph& graph, int start) {
+    std::unordered_set<int> visited{start};
+    std::queue<int> q;
+    q.push(start);
 
-def dijkstra(graph, start):
-    distances = {node: float('infinity') for node in graph}
-    distances[start] = 0
-    pq = [(0, start)]
-    
-    while pq:
-        current_distance, current = heapq.heappop(pq)
-        
-        if current_distance > distances[current]:
-            continue
-            
-        for neighbor, weight in graph[current].items():
-            distance = current_distance + weight
-            
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                heapq.heappush(pq, (distance, neighbor))
-    
-    return distances
+    while (!q.empty()) {
+        int vertex = q.front();
+        q.pop();
+        std::cout << vertex << '\n';
+
+        for (int neighbor : graph.at(vertex)) {
+            if (!visited.count(neighbor)) {
+                visited.insert(neighbor);
+                q.push(neighbor);
+            }
+        }
+    }
+}
+
+using WeightedGraph = std::unordered_map<int, std::unordered_map<int, int>>;
+
+std::unordered_map<int, int> dijkstra(const WeightedGraph& graph, int start) {
+    std::unordered_map<int, int> distances;
+    for (const auto& entry : graph) {
+        distances[entry.first] = std::numeric_limits<int>::max();
+    }
+    distances[start] = 0;
+
+    using Node = std::pair<int, int>; // (distance, node)
+    auto cmp = [](const Node& lhs, const Node& rhs) { return lhs.first > rhs.first; };
+    std::priority_queue<Node, std::vector<Node>, decltype(cmp)> pq(cmp);
+    pq.emplace(0, start);
+
+    while (!pq.empty()) {
+        auto [currentDistance, current] = pq.top();
+        pq.pop();
+
+        if (currentDistance > distances[current]) {
+            continue;
+        }
+
+        for (const auto& [neighbor, weight] : graph.at(current)) {
+            int distance = currentDistance + weight;
+            if (distance < distances[neighbor]) {
+                distances[neighbor] = distance;
+                pq.emplace(distance, neighbor);
+            }
+        }
+    }
+
+    return distances;
+}
 ```
 
 #### **🔥 Must-Solve Problems** (22 problems)
@@ -605,32 +691,53 @@ def dijkstra(graph, start):
 - **Strongly Connected Components**: Tarjan's and Kosaraju's algorithms
 
 #### **Union-Find Template**
-```python
-class UnionFind:
-    def __init__(self, n):
-        self.parent = list(range(n))
-        self.rank = [0] * n
-        self.components = n
-    
-    def find(self, x):
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-        return self.parent[x]
-    
-    def union(self, x, y):
-        px, py = self.find(x), self.find(y)
-        if px == py:
-            return False
-        
-        if self.rank[px] < self.rank[py]:
-            px, py = py, px
-        
-        self.parent[py] = px
-        if self.rank[px] == self.rank[py]:
-            self.rank[px] += 1
-        
-        self.components -= 1
-        return True
+```cpp
+#include <vector>
+#include <numeric>
+#include <algorithm>
+
+class UnionFind {
+public:
+    explicit UnionFind(int n) : parent(n), rank(n, 0), components(n) {
+        std::iota(parent.begin(), parent.end(), 0);
+    }
+
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    bool unite(int x, int y) {
+        int px = find(x);
+        int py = find(y);
+        if (px == py) {
+            return false;
+        }
+
+        if (rank[px] < rank[py]) {
+            std::swap(px, py);
+        }
+
+        parent[py] = px;
+        if (rank[px] == rank[py]) {
+            ++rank[px];
+        }
+
+        --components;
+        return true;
+    }
+
+    int count() const {
+        return components;
+    }
+
+private:
+    std::vector<int> parent;
+    std::vector<int> rank;
+    int components;
+};
 ```
 
 #### **⏱️ Time Allocation**: 3-4 weeks
@@ -644,42 +751,51 @@ class UnionFind:
 3. **Decision Making**: Choose between multiple options at each step
 
 #### **DP Approaches**
-```python
-# Top-Down (Memoization)
-def fib_memo(n, memo={}):
-    if n in memo:
-        return memo[n]
-    if n <= 1:
-        return n
-    
-    memo[n] = fib_memo(n-1, memo) + fib_memo(n-2, memo)
-    return memo[n]
+```cpp
+#include <unordered_map>
+#include <vector>
 
-# Bottom-Up (Tabulation)
-def fib_tab(n):
-    if n <= 1:
-        return n
-    
-    dp = [0] * (n + 1)
-    dp[1] = 1
-    
-    for i in range(2, n + 1):
-        dp[i] = dp[i-1] + dp[i-2]
-    
-    return dp[n]
+int fibMemoHelper(int n, std::unordered_map<int, int>& memo) {
+    if (memo.count(n)) {
+        return memo[n];
+    }
+    if (n <= 1) {
+        return n;
+    }
+    memo[n] = fibMemoHelper(n - 1, memo) + fibMemoHelper(n - 2, memo);
+    return memo[n];
+}
 
-# Space Optimized
-def fib_optimized(n):
-    if n <= 1:
-        return n
-    
-    prev2, prev1 = 0, 1
-    
-    for i in range(2, n + 1):
-        current = prev1 + prev2
-        prev2, prev1 = prev1, current
-    
-    return prev1
+int fibMemo(int n) {
+    std::unordered_map<int, int> memo;
+    return fibMemoHelper(n, memo);
+}
+
+int fibTab(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    std::vector<int> dp(n + 1, 0);
+    dp[1] = 1;
+    for (int i = 2; i <= n; ++i) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    return dp[n];
+}
+
+int fibOptimized(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    int prev2 = 0;
+    int prev1 = 1;
+    for (int i = 2; i <= n; ++i) {
+        int current = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+    return prev1;
+}
 ```
 
 #### **Classic DP Patterns**
@@ -743,35 +859,43 @@ def fib_optimized(n):
 4. **Monotonic Queue/Stack**: Optimize range queries
 
 #### **Common DP Templates**
-```python
-# 0/1 Knapsack
-def knapsack(weights, values, capacity):
-    n = len(weights)
-    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
-    
-    for i in range(1, n + 1):
-        for w in range(1, capacity + 1):
-            if weights[i-1] <= w:
-                dp[i][w] = max(dp[i-1][w], 
-                              dp[i-1][w-weights[i-1]] + values[i-1])
-            else:
-                dp[i][w] = dp[i-1][w]
-    
-    return dp[n][capacity]
+```cpp
+#include <vector>
+#include <string>
+#include <algorithm>
 
-# LCS Template
-def lcs(text1, text2):
-    m, n = len(text1), len(text2)
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
-    
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-            if text1[i-1] == text2[j-1]:
-                dp[i][j] = dp[i-1][j-1] + 1
-            else:
-                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-    
-    return dp[m][n]
+int knapsack(const std::vector<int>& weights, const std::vector<int>& values, int capacity) {
+    const int n = static_cast<int>(weights.size());
+    std::vector<std::vector<int>> dp(n + 1, std::vector<int>(capacity + 1, 0));
+
+    for (int i = 1; i <= n; ++i) {
+        for (int w = 1; w <= capacity; ++w) {
+            if (weights[i - 1] <= w) {
+                dp[i][w] = std::max(dp[i - 1][w], dp[i - 1][w - weights[i - 1]] + values[i - 1]);
+            } else {
+                dp[i][w] = dp[i - 1][w];
+            }
+        }
+    }
+    return dp[n][capacity];
+}
+
+int lcs(const std::string& text1, const std::string& text2) {
+    const int m = static_cast<int>(text1.size());
+    const int n = static_cast<int>(text2.size());
+    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1, 0));
+
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (text1[i - 1] == text2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = std::max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    return dp[m][n];
+}
 ```
 
 #### **⏱️ Time Allocation**: 4-5 weeks
@@ -780,28 +904,30 @@ def lcs(text1, text2):
 **🎯 Goal**: Master advanced techniques and mathematical algorithms
 
 #### **Bit Manipulation**
-```python
-# Common Bit Operations
-x & 1           # Check if odd
-x & (x - 1)     # Remove rightmost set bit
-x | (1 << i)    # Set i-th bit
-x & ~(1 << i)   # Clear i-th bit
-x ^ (1 << i)    # Toggle i-th bit
-x & -x          # Get rightmost set bit
-x >> 1          # Divide by 2
-x << 1          # Multiply by 2
+```cpp
+#include <cstdint>
 
-# Count set bits
-def count_bits(n):
-    count = 0
-    while n:
-        count += 1
-        n &= n - 1  # Remove rightmost set bit
-    return count
+bool isOdd(int x) { return (x & 1) != 0; }
+int removeRightmostSetBit(int x) { return x & (x - 1); }
+int setBit(int x, int i) { return x | (1 << i); }
+int clearBit(int x, int i) { return x & ~(1 << i); }
+int toggleBit(int x, int i) { return x ^ (1 << i); }
+int rightmostSetBit(int x) { return x & -x; }
+int divideByTwo(int x) { return x >> 1; }
+int multiplyByTwo(int x) { return x << 1; }
 
-# Check if power of 2
-def is_power_of_2(n):
-    return n > 0 and (n & (n - 1)) == 0
+int countBits(int n) {
+    int count = 0;
+    while (n) {
+        n &= (n - 1);
+        ++count;
+    }
+    return count;
+}
+
+bool isPowerOfTwo(int n) {
+    return n > 0 && (n & (n - 1)) == 0;
+}
 ```
 
 **Key Problems**:
@@ -813,42 +939,90 @@ def is_power_of_2(n):
 #### **Greedy Algorithms**
 **Greedy Choice Property**: Locally optimal choice leads to globally optimal solution
 
-```python
-# Activity Selection
-def activity_selection(start, finish):
-    n = len(start)
-    activities = list(zip(start, finish, range(n)))
-    activities.sort(key=lambda x: x[1])  # Sort by finish time
-    
-    selected = [activities[0]]
-    last_finish = activities[0][1]
-    
-    for i in range(1, n):
-        if activities[i][0] >= last_finish:
-            selected.append(activities[i])
-            last_finish = activities[i][1]
-    
-    return selected
+```cpp
+#include <vector>
+#include <tuple>
+#include <algorithm>
+#include <queue>
+#include <string>
+#include <unordered_map>
 
-# Huffman Coding Concept
-import heapq
+struct Activity {
+    int start;
+    int finish;
+    int index;
+};
 
-def huffman_coding(freq):
-    heap = [[weight, [[symbol, ""]]] for symbol, weight in freq.items()]
-    heapq.heapify(heap)
-    
-    while len(heap) > 1:
-        lo = heapq.heappop(heap)
-        hi = heapq.heappop(heap)
-        
-        for pair in lo[1:]:
-            pair[1] = '0' + pair[1]
-        for pair in hi[1:]:
-            pair[1] = '1' + pair[1]
-        
-        heapq.heappush(heap, [lo[0] + hi[0]] + lo[1:] + hi[1:])
-    
-    return sorted(heapq.heappop(heap)[1:], key=lambda p: (len(p[-1]), p))
+std::vector<Activity> activitySelection(std::vector<Activity> activities) {
+    std::sort(activities.begin(), activities.end(), [](const Activity& a, const Activity& b) {
+        return a.finish < b.finish;
+    });
+
+    std::vector<Activity> selected;
+    if (activities.empty()) {
+        return selected;
+    }
+
+    selected.push_back(activities.front());
+    int lastFinish = activities.front().finish;
+
+    for (std::size_t i = 1; i < activities.size(); ++i) {
+        if (activities[i].start >= lastFinish) {
+            selected.push_back(activities[i]);
+            lastFinish = activities[i].finish;
+        }
+    }
+
+    return selected;
+}
+
+std::vector<std::pair<char, std::string>> huffmanCoding(const std::unordered_map<char, int>& freq) {
+    struct Node {
+        int weight;
+        std::vector<std::pair<char, std::string>> codes;
+    };
+
+    struct Compare {
+        bool operator()(const Node& a, const Node& b) const {
+            return a.weight > b.weight;
+        }
+    };
+
+    std::priority_queue<Node, std::vector<Node>, Compare> heap;
+    for (const auto& [symbol, weight] : freq) {
+        heap.push(Node{weight, {{symbol, std::string()}}});
+    }
+
+    while (heap.size() > 1) {
+        Node lo = heap.top();
+        heap.pop();
+        Node hi = heap.top();
+        heap.pop();
+
+        for (auto& entry : lo.codes) {
+            entry.second.insert(entry.second.begin(), '0');
+        }
+        for (auto& entry : hi.codes) {
+            entry.second.insert(entry.second.begin(), '1');
+        }
+
+        Node merged;
+        merged.weight = lo.weight + hi.weight;
+        merged.codes.reserve(lo.codes.size() + hi.codes.size());
+        merged.codes.insert(merged.codes.end(), lo.codes.begin(), lo.codes.end());
+        merged.codes.insert(merged.codes.end(), hi.codes.begin(), hi.codes.end());
+        heap.push(std::move(merged));
+    }
+
+    auto codes = heap.top().codes;
+    std::sort(codes.begin(), codes.end(), [](const auto& lhs, const auto& rhs) {
+        if (lhs.second.size() == rhs.second.size()) {
+            return lhs.first < rhs.first;
+        }
+        return lhs.second.size() < rhs.second.size();
+    });
+    return codes;
+}
 ```
 
 **Key Problems**:
@@ -859,37 +1033,51 @@ def huffman_coding(freq):
 #### **Advanced Mathematics**
 
 **Modular Arithmetic**
-```python
-MOD = 10**9 + 7
+```cpp
+#include <vector>
 
-# Modular Exponentiation
-def power_mod(base, exp, mod):
-    result = 1
-    base = base % mod
-    
-    while exp > 0:
-        if exp % 2 == 1:
-            result = (result * base) % mod
-        exp = exp >> 1
-        base = (base * base) % mod
-    
-    return result
+const int MOD = 1'000'000'007;
 
-# Modular Inverse (using Fermat's Little Theorem)
-def mod_inverse(a, mod):
-    return power_mod(a, mod - 2, mod)
+long long powerMod(long long base, long long exp, long long mod) {
+    long long result = 1 % mod;
+    base %= mod;
+    while (exp > 0) {
+        if (exp & 1LL) {
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exp >>= 1;
+    }
+    return result;
+}
 
-# Sieve of Eratosthenes
-def sieve(n):
-    is_prime = [True] * (n + 1)
-    is_prime[0] = is_prime[1] = False
-    
-    for i in range(2, int(n**0.5) + 1):
-        if is_prime[i]:
-            for j in range(i*i, n + 1, i):
-                is_prime[j] = False
-    
-    return [i for i in range(2, n + 1) if is_prime[i]]
+long long modInverse(long long a, long long mod = MOD) {
+    return powerMod(a, mod - 2, mod);
+}
+
+std::vector<int> sieve(int n) {
+    std::vector<bool> isPrime(n + 1, true);
+    if (n >= 0) {
+        isPrime[0] = false;
+    }
+    if (n >= 1) {
+        isPrime[1] = false;
+    }
+    for (int i = 2; i * i <= n; ++i) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= n; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+    std::vector<int> primes;
+    for (int i = 2; i <= n; ++i) {
+        if (isPrime[i]) {
+            primes.push_back(i);
+        }
+    }
+    return primes;
+}
 ```
 
 **Number Theory Problems**:
@@ -898,41 +1086,41 @@ def sieve(n):
 - [Ugly Number II](https://leetcode.com/problems/ugly-number-ii/)
 
 #### **Two Pointers Advanced Patterns**
-```python
-# Dutch National Flag (3-way partition)
-def sort_colors(nums):
-    low = mid = 0
-    high = len(nums) - 1
-    
-    while mid <= high:
-        if nums[mid] == 0:
-            nums[low], nums[mid] = nums[mid], nums[low]
-            low += 1
-            mid += 1
-        elif nums[mid] == 1:
-            mid += 1
-        else:
-            nums[mid], nums[high] = nums[high], nums[mid]
-            high -= 1
+```cpp
+#include <vector>
 
-# Fast and Slow Pointers
-def find_duplicate(nums):
-    slow = fast = nums[0]
-    
-    # Find intersection point
-    while True:
-        slow = nums[slow]
-        fast = nums[nums[fast]]
-        if slow == fast:
-            break
-    
-    # Find entrance to cycle
-    slow = nums[0]
-    while slow != fast:
-        slow = nums[slow]
-        fast = nums[fast]
-    
-    return fast
+void sortColors(std::vector<int>& nums) {
+    int low = 0;
+    int mid = 0;
+    int high = static_cast<int>(nums.size()) - 1;
+
+    while (mid <= high) {
+        if (nums[mid] == 0) {
+            std::swap(nums[low++], nums[mid++]);
+        } else if (nums[mid] == 1) {
+            ++mid;
+        } else {
+            std::swap(nums[mid], nums[high--]);
+        }
+    }
+}
+
+int findDuplicate(const std::vector<int>& nums) {
+    int slow = nums[0];
+    int fast = nums[0];
+
+    do {
+        slow = nums[slow];
+        fast = nums[nums[fast]];
+    } while (slow != fast);
+
+    slow = nums[0];
+    while (slow != fast) {
+        slow = nums[slow];
+        fast = nums[fast];
+    }
+    return fast;
+}
 ```
 
 #### **⏱️ Time Allocation**: 2-3 weeks
@@ -951,112 +1139,136 @@ def find_duplicate(nums):
 - **Polymorphism**: Method overriding and dynamic dispatch
 
 #### **Advanced OOP Concepts**
-```java
-// Example: Encapsulation
-public class BankAccount {
-    private double balance;  // Private data
-    
-    public void deposit(double amount) {
-        if (amount > 0) {
-            balance += amount;
+```cpp
+#include <iostream>
+
+class BankAccount {
+public:
+    void deposit(double amount) {
+        if (amount > 0.0) {
+            balance_ += amount;
         }
     }
-    
-    public double getBalance() {
-        return balance;
-    }
-}
 
-// Example: Inheritance & Polymorphism
-abstract class Animal {
-    abstract void makeSound();  // Abstract method
-    
-    void eat() {  // Concrete method
-        System.out.println("Animal is eating");
+    double getBalance() const {
+        return balance_;
     }
-}
 
-class Dog extends Animal {
-    @Override
-    void makeSound() {
-        System.out.println("Woof!");
-    }
-}
+private:
+    double balance_ = 0.0;
+};
 
-class Cat extends Animal {
-    @Override
-    void makeSound() {
-        System.out.println("Meow!");
+class Animal {
+public:
+    virtual ~Animal() = default;
+    virtual void makeSound() const = 0;
+
+    void eat() const {
+        std::cout << "Animal is eating\n";
     }
-}
+};
+
+class Dog : public Animal {
+public:
+    void makeSound() const override {
+        std::cout << "Woof!\n";
+    }
+};
+
+class Cat : public Animal {
+public:
+    void makeSound() const override {
+        std::cout << "Meow!\n";
+    }
+};
 ```
 
 #### **Essential Design Patterns**
 
 **1. Singleton Pattern**
-```java
-public class Singleton {
-    private static volatile Singleton instance;
-    
-    private Singleton() {}
-    
-    public static Singleton getInstance() {
-        if (instance == null) {
-            synchronized (Singleton.class) {
-                if (instance == null) {
-                    instance = new Singleton();
-                }
-            }
-        }
+```cpp
+class Singleton {
+public:
+    static Singleton& instance() {
+        static Singleton instance;
         return instance;
     }
-}
+
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+
+private:
+    Singleton() = default;
+};
 ```
 
 **2. Factory Pattern**
-```java
-interface Shape {
-    void draw();
-}
+```cpp
+#include <iostream>
+#include <memory>
+#include <string>
+#include <algorithm>
 
-class Circle implements Shape {
-    public void draw() { System.out.println("Circle"); }
-}
+class Shape {
+public:
+    virtual ~Shape() = default;
+    virtual void draw() const = 0;
+};
 
-class Rectangle implements Shape {
-    public void draw() { System.out.println("Rectangle"); }
-}
+class Circle : public Shape {
+public:
+    void draw() const override { std::cout << "Circle\n"; }
+};
+
+class Rectangle : public Shape {
+public:
+    void draw() const override { std::cout << "Rectangle\n"; }
+};
 
 class ShapeFactory {
-    public static Shape getShape(String type) {
-        switch (type.toLowerCase()) {
-            case "circle": return new Circle();
-            case "rectangle": return new Rectangle();
-            default: return null;
+public:
+    static std::unique_ptr<Shape> createShape(std::string type) {
+        std::transform(type.begin(), type.end(), type.begin(), [](unsigned char c) { return std::tolower(c); });
+        if (type == "circle") {
+            return std::make_unique<Circle>();
         }
+        if (type == "rectangle") {
+            return std::make_unique<Rectangle>();
+        }
+        return nullptr;
     }
-}
+};
 ```
 
 **3. Observer Pattern**
-```java
-interface Observer {
-    void update(String message);
-}
+```cpp
+#include <vector>
+#include <memory>
+#include <string>
+
+class Observer {
+public:
+    virtual ~Observer() = default;
+    virtual void update(const std::string& message) = 0;
+};
 
 class Subject {
-    private List<Observer> observers = new ArrayList<>();
-    
-    public void addObserver(Observer observer) {
-        observers.add(observer);
+public:
+    void addObserver(const std::shared_ptr<Observer>& observer) {
+        observers_.push_back(observer);
     }
-    
-    public void notifyObservers(String message) {
-        for (Observer observer : observers) {
-            observer.update(message);
+
+    void notifyObservers(const std::string& message) {
+        for (const auto& observer : observers_) {
+            if (observer) {
+                observer->update(message);
+            }
         }
     }
-}
+
+private:
+    std::vector<std::shared_ptr<Observer>> observers_;
+};
 ```
 
 #### **Interview Topics**
@@ -1076,27 +1288,36 @@ class Subject {
 - **Context Switching**: Save/restore CPU state
 
 #### **Synchronization**
-```c
-// Mutex Example
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-int shared_resource = 0;
+```cpp
+#include <mutex>
+#include <thread>
+#include <semaphore>
+#include <vector>
 
-void* thread_function(void* arg) {
-    pthread_mutex_lock(&mutex);
-    shared_resource++;  // Critical section
-    pthread_mutex_unlock(&mutex);
-    return NULL;
+std::mutex mutex;
+int sharedResource = 0;
+
+void threadFunction() {
+    std::lock_guard<std::mutex> lock(mutex);
+    ++sharedResource; // Critical section
 }
 
-// Semaphore Example  
-sem_t semaphore;
-sem_init(&semaphore, 0, 1);  // Binary semaphore
+std::counting_semaphore<1> semaphore(1);
 
-void* producer(void* arg) {
-    sem_wait(&semaphore);
+void producer() {
+    semaphore.acquire();
     // Produce item
-    sem_post(&semaphore);
-    return NULL;
+    semaphore.release();
+}
+
+void runThreads() {
+    std::vector<std::thread> workers;
+    for (int i = 0; i < 4; ++i) {
+        workers.emplace_back(threadFunction);
+    }
+    for (auto& worker : workers) {
+        worker.join();
+    }
 }
 ```
 
@@ -1129,24 +1350,25 @@ void* producer(void* arg) {
 - **BCNF**: 3NF + every determinant is a candidate key
 
 #### **SQL Mastery**
-```sql
--- Join Operations
-SELECT e.name, d.department_name
+```cpp
+#include <string>
+#include <vector>
+
+const std::string joinQuery = R"(SELECT e.name, d.department_name
 FROM employees e
-INNER JOIN departments d ON e.dept_id = d.id;
+INNER JOIN departments d ON e.dept_id = d.id;)";
 
--- Subqueries
-SELECT name FROM employees 
-WHERE salary > (SELECT AVG(salary) FROM employees);
+const std::string subquery = R"(SELECT name FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);)";
 
--- Window Functions
-SELECT name, salary,
-       RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) as rank
-FROM employees;
+const std::string windowFunction = R"(SELECT name, salary,
+       RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rank
+FROM employees;)";
 
--- Indexing
-CREATE INDEX idx_employee_name ON employees(name);
-CREATE COMPOSITE INDEX idx_name_dept ON employees(name, dept_id);
+const std::vector<std::string> indexStatements = {
+    "CREATE INDEX idx_employee_name ON employees(name);",
+    "CREATE INDEX idx_name_dept ON employees(name, dept_id);"
+};
 ```
 
 #### **ACID Properties**
@@ -1190,19 +1412,21 @@ CREATE COMPOSITE INDEX idx_name_dept ON employees(name, dept_id);
 | Physical | Network Interface | Cables, Radio |
 
 #### **HTTP vs HTTPS**
-```
-HTTP Request:
-GET /api/users HTTP/1.1
-Host: example.com
-User-Agent: Mozilla/5.0
-Accept: application/json
+```cpp
+#include <iostream>
 
-HTTP Response:
-HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 123
-
-{"users": [...]}
+void printHttpExample() {
+    std::cout << "HTTP Request:\n"
+              << "GET /api/users HTTP/1.1\n"
+              << "Host: example.com\n"
+              << "User-Agent: Mozilla/5.0\n"
+              << "Accept: application/json\n\n"
+              << "HTTP Response:\n"
+              << "HTTP/1.1 200 OK\n"
+              << "Content-Type: application/json\n"
+              << "Content-Length: 123\n\n"
+              << "{\"users\": [...]}\n";
+}
 ```
 
 #### **TCP vs UDP**
@@ -1229,24 +1453,35 @@ Content-Length: 123
 - **Caching**: Store frequently accessed data
 
 #### **Caching Strategies**
-```python
-# Cache-Aside Pattern
-def get_user(user_id):
-    # Check cache first
-    user = cache.get(f"user:{user_id}")
-    if user is None:
-        # Cache miss - fetch from database
-        user = database.get_user(user_id)
-        # Store in cache
-        cache.set(f"user:{user_id}", user, ttl=3600)
-    return user
+```cpp
+#include <string>
+#include <unordered_map>
 
-# Write-Through Pattern
-def update_user(user_id, user_data):
-    # Update database
-    database.update_user(user_id, user_data)
-    # Update cache
-    cache.set(f"user:{user_id}", user_data, ttl=3600)
+struct User {
+    int id;
+    std::string name;
+};
+
+std::unordered_map<std::string, User> cache;
+User fetchFromDatabase(int userId);
+void persistToDatabase(int userId, const User& user);
+
+User getUser(int userId) {
+    const std::string cacheKey = "user:" + std::to_string(userId);
+    if (auto it = cache.find(cacheKey); it != cache.end()) {
+        return it->second;
+    }
+
+    User user = fetchFromDatabase(userId);
+    cache[cacheKey] = user; // TTL handling would be added in a production cache
+    return user;
+}
+
+void updateUser(int userId, const User& userData) {
+    persistToDatabase(userId, userData);
+    const std::string cacheKey = "user:" + std::to_string(userId);
+    cache[cacheKey] = userData;
+}
 ```
 
 #### **Database Scaling**
@@ -1264,21 +1499,37 @@ def update_user(user_id, user_data):
 | Complexity | Lower | Higher |
 
 #### **API Design**
-```python
-# RESTful API Design
-GET    /api/users          # Get all users
-GET    /api/users/123      # Get specific user
-POST   /api/users          # Create new user
-PUT    /api/users/123      # Update user
-DELETE /api/users/123      # Delete user
+```cpp
+#include <string>
+#include <vector>
 
-# HTTP Status Codes
-200 OK                     # Success
-201 Created               # Resource created
-400 Bad Request           # Client error
-401 Unauthorized          # Authentication required
-404 Not Found             # Resource not found
-500 Internal Server Error # Server error
+struct Endpoint {
+    std::string method;
+    std::string path;
+    std::string description;
+};
+
+const std::vector<Endpoint> apiEndpoints = {
+    {"GET", "/api/users", "Get all users"},
+    {"GET", "/api/users/123", "Get specific user"},
+    {"POST", "/api/users", "Create new user"},
+    {"PUT", "/api/users/123", "Update user"},
+    {"DELETE", "/api/users/123", "Delete user"}
+};
+
+struct HttpStatus {
+    int code;
+    std::string reason;
+};
+
+const std::vector<HttpStatus> httpStatusCodes = {
+    {200, "OK"},
+    {201, "Created"},
+    {400, "Bad Request"},
+    {401, "Unauthorized"},
+    {404, "Not Found"},
+    {500, "Internal Server Error"}
+};
 ```
 
 #### **⏱️ Time Allocation**: 4-5 weeks total
@@ -1291,34 +1542,45 @@ DELETE /api/users/123      # Delete user
 **🎯 Goal**: Master version control and collaborative development
 
 #### **Essential Git Commands**
-```bash
-# Repository Setup
-git init                          # Initialize repository
-git clone <url>                   # Clone remote repository
-git remote add origin <url>       # Add remote
+```cpp
+#include <string>
+#include <vector>
 
-# Basic Workflow
-git status                        # Check working directory status
-git add .                         # Stage all changes
-git add <file>                    # Stage specific file
-git commit -m "message"           # Commit with message
-git push origin <branch>          # Push to remote branch
-git pull origin <branch>          # Pull from remote branch
+struct CommandGroup {
+    std::string title;
+    std::vector<std::string> commands;
+};
 
-# Branching
-git branch                        # List branches
-git branch <name>                 # Create new branch
-git checkout <branch>             # Switch to branch
-git checkout -b <name>            # Create and switch to branch
-git merge <branch>                # Merge branch into current
-git branch -d <name>              # Delete branch
-
-# Advanced Operations
-git rebase <branch>               # Rebase current branch
-git cherry-pick <commit>          # Apply specific commit
-git reset --hard <commit>         # Reset to specific commit
-git stash                         # Temporarily save changes
-git stash pop                     # Apply stashed changes
+const std::vector<CommandGroup> gitCommands = {
+    {"Repository Setup", {
+        "git init  # Initialize repository",
+        "git clone <url>  # Clone remote repository",
+        "git remote add origin <url>  # Add remote"
+    }},
+    {"Basic Workflow", {
+        "git status  # Check working directory status",
+        "git add .  # Stage all changes",
+        "git add <file>  # Stage specific file",
+        "git commit -m 'message'  # Commit with message",
+        "git push origin <branch>  # Push to remote branch",
+        "git pull origin <branch>  # Pull from remote branch"
+    }},
+    {"Branching", {
+        "git branch  # List branches",
+        "git branch <name>  # Create new branch",
+        "git checkout <branch>  # Switch to branch",
+        "git checkout -b <name>  # Create and switch to branch",
+        "git merge <branch>  # Merge branch into current",
+        "git branch -d <name>  # Delete branch"
+    }},
+    {"Advanced Operations", {
+        "git rebase <branch>  # Rebase current branch",
+        "git cherry-pick <commit>  # Apply specific commit",
+        "git reset --hard <commit>  # Reset to specific commit",
+        "git stash  # Temporarily save changes",
+        "git stash pop  # Apply stashed changes"
+    }}
+};
 ```
 
 #### **GitHub Workflow**
@@ -1342,73 +1604,107 @@ git stash pop                     # Apply stashed changes
 **🎯 Goal**: Navigate and manage Linux systems efficiently
 
 #### **File System Navigation**
-```bash
-pwd                              # Print working directory
-ls -la                           # List files with details
-cd /path/to/directory            # Change directory
-cd ..                            # Go to parent directory
-cd ~                             # Go to home directory
+```cpp
+#include <string>
+#include <vector>
 
-# File Operations
-touch file.txt                   # Create empty file
-mkdir directory                  # Create directory
-mkdir -p path/to/dir             # Create nested directories
-cp source destination            # Copy file/directory
-mv source destination            # Move/rename file
-rm file.txt                      # Remove file
-rm -rf directory                 # Remove directory recursively
+struct ShellCommandGroup {
+    std::string title;
+    std::vector<std::string> commands;
+};
+
+const std::vector<ShellCommandGroup> filesystemCommands = {
+    {"Navigation", {
+        "pwd  # Print working directory",
+        "ls -la  # List files with details",
+        "cd /path/to/directory  # Change directory",
+        "cd ..  # Go to parent directory",
+        "cd ~  # Go to home directory"
+    }},
+    {"File Operations", {
+        "touch file.txt  # Create empty file",
+        "mkdir directory  # Create directory",
+        "mkdir -p path/to/dir  # Create nested directories",
+        "cp source destination  # Copy file/directory",
+        "mv source destination  # Move/rename file",
+        "rm file.txt  # Remove file",
+        "rm -rf directory  # Remove directory recursively"
+    }}
+};
 ```
 
 #### **File Content Management**
-```bash
-cat file.txt                     # Display file content
-less file.txt                    # View file with pagination
-head -n 10 file.txt              # First 10 lines
-tail -n 10 file.txt              # Last 10 lines
-tail -f log.txt                  # Follow file changes
-grep "pattern" file.txt          # Search in file
-grep -r "pattern" directory      # Recursive search
-find /path -name "*.txt"         # Find files by name
-find /path -type f -size +1M     # Find large files
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> fileContentCommands = {
+    "cat file.txt  # Display file content",
+    "less file.txt  # View file with pagination",
+    "head -n 10 file.txt  # First 10 lines",
+    "tail -n 10 file.txt  # Last 10 lines",
+    "tail -f log.txt  # Follow file changes",
+    "grep 'pattern' file.txt  # Search in file",
+    "grep -r 'pattern' directory  # Recursive search",
+    "find /path -name '*.txt'  # Find files by name",
+    "find /path -type f -size +1M  # Find large files"
+};
 ```
 
 #### **Process Management**
-```bash
-ps aux                           # List all processes
-ps aux | grep python             # Find specific processes
-top                              # Real-time process viewer
-htop                             # Enhanced process viewer
-kill <PID>                       # Terminate process
-kill -9 <PID>                    # Force kill process
-killall python                  # Kill all python processes
-nohup command &                  # Run command in background
-jobs                             # List background jobs
-fg %1                            # Bring job to foreground
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> processCommands = {
+    "ps aux  # List all processes",
+    "ps aux | grep python  # Find specific processes",
+    "top  # Real-time process viewer",
+    "htop  # Enhanced process viewer",
+    "kill <PID>  # Terminate process",
+    "kill -9 <PID>  # Force kill process",
+    "killall python  # Kill all python processes",
+    "nohup command &  # Run command in background",
+    "jobs  # List background jobs",
+    "fg %1  # Bring job to foreground"
+};
 ```
 
 #### **Permissions & Ownership**
-```bash
-chmod 755 file.txt               # Set file permissions
-chmod +x script.sh               # Make file executable
-chown user:group file.txt        # Change ownership
-sudo command                     # Run as superuser
-su - username                    # Switch user
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> permissionCommands = {
+    "chmod 755 file.txt  # Set file permissions",
+    "chmod +x script.sh  # Make file executable",
+    "chown user:group file.txt  # Change ownership",
+    "sudo command  # Run as superuser",
+    "su - username  # Switch user"
+};
 ```
 
 #### **SSH & Remote Access**
-```bash
-ssh user@hostname                # Connect to remote server
-ssh-keygen -t rsa                # Generate SSH key pair
-ssh-copy-id user@hostname        # Copy public key to server
-scp file.txt user@host:/path     # Copy file to remote
-rsync -av source/ dest/          # Synchronize directories
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> sshCommands = {
+    "ssh user@hostname  # Connect to remote server",
+    "ssh-keygen -t rsa  # Generate SSH key pair",
+    "ssh-copy-id user@hostname  # Copy public key to server",
+    "scp file.txt user@host:/path  # Copy file to remote",
+    "rsync -av source/ dest/  # Synchronize directories"
+};
 ```
 
 ### **Build Tools & Package Management**
 
 #### **Maven (Java)**
-```xml
-<!-- pom.xml structure -->
+```cpp
+#include <string>
+
+const std::string pomXml = R"(<!-- pom.xml structure -->
 <project>
     <groupId>com.example</groupId>
     <artifactId>my-app</artifactId>
@@ -1436,20 +1732,27 @@ rsync -av source/ dest/          # Synchronize directories
             </plugin>
         </plugins>
     </build>
-</project>
+</project>)";
 ```
 
-```bash
-mvn clean compile                # Clean and compile
-mvn test                         # Run tests
-mvn package                      # Create JAR file
-mvn install                      # Install to local repository
-mvn dependency:tree              # Show dependency tree
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> mavenCommands = {
+    "mvn clean compile  # Clean and compile",
+    "mvn test  # Run tests",
+    "mvn package  # Create JAR file",
+    "mvn install  # Install to local repository",
+    "mvn dependency:tree  # Show dependency tree"
+};
 ```
 
 #### **Gradle (Java/Kotlin)**
-```gradle
-// build.gradle
+```cpp
+#include <string>
+
+const std::string buildGradle = R"(// build.gradle
 plugins {
     id 'java'
     id 'application'
@@ -1466,127 +1769,149 @@ dependencies {
 
 application {
     mainClass = 'com.example.App'
-}
+})";
 ```
 
-```bash
-gradle build                     # Build project
-gradle test                      # Run tests
-gradle run                       # Run application
-gradle clean                     # Clean build directory
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> gradleCommands = {
+    "gradle build  # Build project",
+    "gradle test  # Run tests",
+    "gradle run  # Run application",
+    "gradle clean  # Clean build directory"
+};
 ```
 
 #### **pip/virtualenv (Python)**
-```bash
-# Virtual Environment
-python -m venv myenv             # Create virtual environment
-source myenv/bin/activate        # Activate (Linux/Mac)
-myenv\Scripts\activate           # Activate (Windows)
-deactivate                       # Deactivate environment
+```cpp
+#include <string>
+#include <vector>
 
-# Package Management
-pip install package              # Install package
-pip install -r requirements.txt # Install from file
-pip freeze > requirements.txt   # Generate requirements file
-pip list                         # List installed packages
-pip show package                 # Show package details
-pip uninstall package           # Uninstall package
+struct PythonWorkflow {
+    std::string title;
+    std::vector<std::string> commands;
+};
+
+const std::vector<PythonWorkflow> pythonCommands = {
+    {"Virtual Environment", {
+        "python -m venv myenv  # Create virtual environment",
+        "source myenv/bin/activate  # Activate (Linux/Mac)",
+        "myenv\\Scripts\\activate  # Activate (Windows)",
+        "deactivate  # Deactivate environment"
+    }},
+    {"Package Management", {
+        "pip install package  # Install package",
+        "pip install -r requirements.txt  # Install from file",
+        "pip freeze > requirements.txt  # Generate requirements file",
+        "pip list  # List installed packages",
+        "pip show package  # Show package details",
+        "pip uninstall package  # Uninstall package"
+    }}
+};
 ```
 
 #### **npm (JavaScript/Node.js)**
-```bash
-npm init                         # Initialize package.json
-npm install package              # Install package locally
-npm install -g package           # Install package globally
-npm install --save-dev package   # Install as dev dependency
-npm run script                   # Run package script
-npm test                         # Run tests
-npm start                        # Start application
-npm audit                        # Check for vulnerabilities
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> npmCommands = {
+    "npm init  # Initialize package.json",
+    "npm install package  # Install package locally",
+    "npm install -g package  # Install package globally",
+    "npm install --save-dev package  # Install as dev dependency",
+    "npm run script  # Run package script",
+    "npm test  # Run tests",
+    "npm start  # Start application",
+    "npm audit  # Check for vulnerabilities"
+};
 ```
 
 ### **Unit Testing Frameworks**
 
 #### **JUnit (Java)**
-```java
-import org.junit.Test;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.After;
+```cpp
+#include <cassert>
+#include <stdexcept>
+#include "calculator.h"
 
-public class CalculatorTest {
-    private Calculator calculator;
-    
-    @Before
-    public void setUp() {
-        calculator = new Calculator();
-    }
-    
-    @Test
-    public void testAddition() {
-        int result = calculator.add(2, 3);
-        Assert.assertEquals(5, result);
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void testDivisionByZero() {
+void testAddition() {
+    Calculator calculator;
+    int result = calculator.add(2, 3);
+    assert(result == 5);
+}
+
+void testDivisionByZero() {
+    Calculator calculator;
+    bool threw = false;
+    try {
         calculator.divide(10, 0);
+    } catch (const std::invalid_argument&) {
+        threw = true;
     }
-    
-    @After
-    public void tearDown() {
-        calculator = null;
-    }
+    assert(threw);
+}
+
+void runCalculatorTests() {
+    testAddition();
+    testDivisionByZero();
 }
 ```
 
 #### **PyTest (Python)**
-```python
-import pytest
-from calculator import Calculator
+```cpp
+#include <vector>
+#include <tuple>
+#include <cassert>
+#include <stdexcept>
+#include "calculator.h"
 
-class TestCalculator:
-    def setup_method(self):
-        self.calculator = Calculator()
-    
-    def test_addition(self):
-        result = self.calculator.add(2, 3)
-        assert result == 5
-    
-    def test_division_by_zero(self):
-        with pytest.raises(ZeroDivisionError):
-            self.calculator.divide(10, 0)
-    
-    @pytest.mark.parametrize("a,b,expected", [
-        (2, 3, 5),
-        (0, 0, 0),
-        (-1, 1, 0)
-    ])
-    def test_addition_multiple(self, a, b, expected):
-        assert self.calculator.add(a, b) == expected
+void testAdditionCase(int a, int b, int expected) {
+    Calculator calculator;
+    assert(calculator.add(a, b) == expected);
+}
 
-# Run tests
-# pytest -v                      # Verbose output
-# pytest --cov=calculator        # Code coverage
-# pytest -k "test_addition"      # Run specific tests
+void testDivisionThrows() {
+    Calculator calculator;
+    bool threw = false;
+    try {
+        calculator.divide(10, 0);
+    } catch (const std::runtime_error&) {
+        threw = true;
+    } catch (const std::invalid_argument&) {
+        threw = true;
+    }
+    assert(threw);
+}
+
+void runParameterizedAdditionTests() {
+    const std::vector<std::tuple<int, int, int>> cases = {
+        {2, 3, 5},
+        {0, 0, 0},
+        {-1, 1, 0}
+    };
+    for (const auto& [a, b, expected] : cases) {
+        testAdditionCase(a, b, expected);
+    }
+}
 ```
 
 #### **Google Test (C++)**
 ```cpp
 #include <gtest/gtest.h>
+#include <memory>
+#include <tuple>
 #include "calculator.h"
 
 class CalculatorTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        calculator = new Calculator();
+        calculator = std::make_unique<Calculator>();
     }
-    
-    void TearDown() override {
-        delete calculator;
-    }
-    
-    Calculator* calculator;
+
+    std::unique_ptr<Calculator> calculator;
 };
 
 TEST_F(CalculatorTest, Addition) {
@@ -1597,9 +1922,17 @@ TEST_F(CalculatorTest, DivisionByZero) {
     EXPECT_THROW(calculator->divide(10, 0), std::invalid_argument);
 }
 
+class CalculatorAdditionTest : public ::testing::TestWithParam<std::tuple<int, int, int>> {};
+
+TEST_P(CalculatorAdditionTest, MatchesExpectedSum) {
+    const auto [a, b, expected] = GetParam();
+    Calculator calculator;
+    EXPECT_EQ(expected, calculator.add(a, b));
+}
+
 INSTANTIATE_TEST_SUITE_P(
-    ParameterizedTest,
-    CalculatorTest,
+    ParameterizedAddition,
+    CalculatorAdditionTest,
     ::testing::Values(
         std::make_tuple(2, 3, 5),
         std::make_tuple(0, 0, 0),
@@ -1611,8 +1944,10 @@ INSTANTIATE_TEST_SUITE_P(
 ### **CI/CD Fundamentals**
 
 #### **GitHub Actions**
-```yaml
-# .github/workflows/ci.yml
+```cpp
+#include <string>
+
+const std::string githubActionsWorkflow = R"(# .github/workflows/ci.yml
 name: CI/CD Pipeline
 
 on:
@@ -1624,25 +1959,25 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
-    
+
     - name: Cache Maven dependencies
       uses: actions/cache@v3
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-    
+
     - name: Run tests
       run: mvn clean test
-    
+
     - name: Generate test report
       uses: dorny/test-reporter@v1
       if: success() || failure()
@@ -1650,10 +1985,10 @@ jobs:
         name: Maven Tests
         path: target/surefire-reports/*.xml
         reporter: java-junit
-    
+
     - name: Build application
       run: mvn clean package
-    
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -1664,10 +1999,11 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
     - name: Deploy to staging
       run: echo "Deploying to staging environment"
+)";
 ```
 
 ### **Cloud Computing Basics**
@@ -1681,8 +2017,10 @@ jobs:
 - **IAM**: Identity and access management
 
 #### **Docker Essentials**
-```dockerfile
-# Dockerfile
+```cpp
+#include <string>
+
+const std::string dockerfile = R"(# Dockerfile
 FROM openjdk:11-jre-slim
 
 COPY target/app.jar /app/app.jar
@@ -1692,21 +2030,33 @@ WORKDIR /app
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
+)";
 ```
 
-```bash
-# Docker Commands
-docker build -t myapp .          # Build image
-docker run -p 8080:8080 myapp    # Run container
-docker ps                        # List running containers
-docker stop <container-id>       # Stop container
-docker images                    # List images
-docker rmi <image-id>            # Remove image
+```cpp
+#include <string>
+#include <vector>
 
-# Docker Compose
-docker-compose up                # Start services
-docker-compose down              # Stop services
-docker-compose logs              # View logs
+struct DockerCommandGroup {
+    std::string title;
+    std::vector<std::string> commands;
+};
+
+const std::vector<DockerCommandGroup> dockerCommands = {
+    {"Docker Commands", {
+        "docker build -t myapp .  # Build image",
+        "docker run -p 8080:8080 myapp  # Run container",
+        "docker ps  # List running containers",
+        "docker stop <container-id>  # Stop container",
+        "docker images  # List images",
+        "docker rmi <image-id>  # Remove image"
+    }},
+    {"Docker Compose", {
+        "docker-compose up  # Start services",
+        "docker-compose down  # Stop services",
+        "docker-compose logs  # View logs"
+    }}
+};
 ```
 
 #### **⏱️ Time Allocation**: 3-4 weeks
@@ -1726,12 +2076,17 @@ docker-compose logs              # View logs
    - Discuss time/space complexity expectations
 
 2. **Think Out Loud**
-   ```
-   "Let me think about this step by step..."
-   "I'll start with a brute force approach and then optimize..."
-   "The key insight here is..."
-   "Let me trace through an example..."
-   ```
+```cpp
+#include <string>
+#include <vector>
+
+const std::vector<std::string> thinkingPhrases = {
+    "Let me think about this step by step...",
+    "I'll start with a brute force approach and then optimize...",
+    "The key insight here is...",
+    "Let me trace through an example..."
+};
+```
 
 3. **Explain Your Approach**
    - High-level strategy first
@@ -1740,26 +2095,22 @@ docker-compose logs              # View logs
    - Mention alternative approaches
 
 4. **Code with Commentary**
-   ```python
-   def two_sum(nums, target):
-       """
-       I'll use a hash map to store complements.
-       Time: O(n), Space: O(n)
-       """
-       seen = {}  # complement -> index mapping
-       
-       for i, num in enumerate(nums):
-           complement = target - num
-           
-           # Check if complement exists
-           if complement in seen:
-               return [seen[complement], i]
-           
-           # Store current number for future lookups
-           seen[num] = i
-       
-       return []  # No solution found
-   ```
+```cpp
+#include <vector>
+#include <unordered_map>
+
+std::vector<int> twoSum(const std::vector<int>& nums, int target) {
+    std::unordered_map<int, int> seen; // value -> index mapping
+    for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+        int complement = target - nums[i];
+        if (auto it = seen.find(complement); it != seen.end()) {
+            return {it->second, i};
+        }
+        seen[nums[i]] = i;
+    }
+    return {};
+}
+```
 
 5. **Test Your Solution**
    - Walk through with given examples
@@ -1767,26 +2118,31 @@ docker-compose logs              # View logs
    - Verify time/space complexity
 
 #### **Problem-Solving Template**
-```
-1. UNDERSTAND
-   - Restate the problem
-   - Ask clarifying questions
-   - Identify constraints
+```cpp
+#include <string>
+#include <vector>
 
-2. PLAN
-   - Brainstorm approaches
-   - Choose optimal strategy
-   - Estimate complexity
-
-3. IMPLEMENT
-   - Start with pseudocode
-   - Code incrementally
-   - Handle edge cases
-
-4. VERIFY
-   - Test with examples
-   - Check edge cases
-   - Optimize if needed
+const std::vector<std::string> problemSolvingTemplate = {
+    "1. UNDERSTAND",
+    "   - Restate the problem",
+    "   - Ask clarifying questions",
+    "   - Identify constraints",
+    "",
+    "2. PLAN",
+    "   - Brainstorm approaches",
+    "   - Choose optimal strategy",
+    "   - Estimate complexity",
+    "",
+    "3. IMPLEMENT",
+    "   - Start with pseudocode",
+    "   - Code incrementally",
+    "   - Handle edge cases",
+    "",
+    "4. VERIFY",
+    "   - Test with examples",
+    "   - Check edge cases",
+    "   - Optimize if needed"
+};
 ```
 
 ### **Behavioral Interview Preparation**
@@ -1801,8 +2157,10 @@ docker-compose logs              # View logs
 #### **Essential Behavioral Questions & Example Responses**
 
 **1. "Tell me about a challenging project you worked on"**
-```
-SITUATION: During my final semester, our team of 4 was tasked 
+```cpp
+#include <string>
+
+const std::string challengingProjectStory = R"(SITUATION: During my final semester, our team of 4 was tasked 
 with building a distributed chat application for 500+ concurrent users.
 
 TASK: I was the backend lead responsible for designing the 
@@ -1816,12 +2174,14 @@ issues during testing, I refactored to use message partitioning.
 RESULT: We successfully delivered the project with 99.9% uptime 
 during demo week. The application handled 800+ concurrent users 
 without performance degradation. I learned the importance of 
-load testing early and how to design for scalability from the start.
+load testing early and how to design for scalability from the start.)";
 ```
 
 **2. "Describe a time when you had to learn a new technology quickly"**
-```
-SITUATION: Two weeks into my internship, the team decided to 
+```cpp
+#include <string>
+
+const std::string learningTechnologyStory = R"(SITUATION: Two weeks into my internship, the team decided to 
 migrate our REST API from Python Flask to Node.js Express.
 
 TASK: As the newest team member, I volunteered to learn Node.js 
@@ -1835,7 +2195,7 @@ shared it with the team.
 RESULT: I successfully migrated 3 API endpoints within a week 
 and became the go-to person for JavaScript questions. The migration 
 improved API response time by 40%. I developed confidence in 
-learning new technologies quickly.
+learning new technologies quickly.)";
 ```
 
 #### **Common Behavioral Question Categories**
@@ -1920,27 +2280,38 @@ learning new technologies quickly.
 - **Interviewing.io**: Anonymous interviews with engineers
 
 #### **Self-Assessment Checklist**
-```
-Technical Skills:
-□ Can solve medium problems in 30-45 minutes
-□ Explain time/space complexity confidently
-□ Code cleanly with proper variable names
-□ Handle edge cases systematically
-□ Optimize solutions when prompted
+```cpp
+#include <string>
+#include <vector>
 
-Communication:
-□ Think out loud clearly
-□ Ask clarifying questions
-□ Explain approach before coding
-□ Walk through test cases
-□ Admit when stuck and ask for hints
+struct ChecklistSection {
+    std::string title;
+    std::vector<std::string> items;
+};
 
-Behavioral:
-□ Have 5-7 STAR stories prepared
-□ Show growth mindset and learning
-□ Demonstrate leadership and teamwork
-□ Express genuine interest in company/role
-□ Ask thoughtful questions about team/culture
+const std::vector<ChecklistSection> selfAssessmentChecklist = {
+    {"Technical Skills", {
+        "Can solve medium problems in 30-45 minutes",
+        "Explain time/space complexity confidently",
+        "Code cleanly with proper variable names",
+        "Handle edge cases systematically",
+        "Optimize solutions when prompted"
+    }},
+    {"Communication", {
+        "Think out loud clearly",
+        "Ask clarifying questions",
+        "Explain approach before coding",
+        "Walk through test cases",
+        "Admit when stuck and ask for hints"
+    }},
+    {"Behavioral", {
+        "Have 5-7 STAR stories prepared",
+        "Show growth mindset and learning",
+        "Demonstrate leadership and teamwork",
+        "Express genuine interest in company/role",
+        "Ask thoughtful questions about team/culture"
+    }}
+};
 ```
 
 ### **Portfolio Projects**
@@ -1998,65 +2369,70 @@ Behavioral:
    - Add screenshots/demos
 
 #### **GitHub Portfolio Optimization**
-```markdown
-# Project README Template
+```cpp
+#include <string>
+#include <vector>
 
-## 🚀 Project Name
-Brief description of what the project does and why it's useful.
-
-## ✨ Features
-- Feature 1 with brief explanation
-- Feature 2 with brief explanation
-- Feature 3 with brief explanation
-
-## 🛠️ Tech Stack
-- **Frontend**: React, TypeScript, Tailwind CSS
-- **Backend**: Node.js, Express, MongoDB
-- **Deployment**: AWS EC2, Docker, Nginx
-
-## 📋 Prerequisites
-- Node.js 16+
-- MongoDB 4.4+
-- Docker (optional)
-
-## 🚀 Quick Start
-```bash
-# Clone repository
-git clone https://github.com/username/project-name.git
-
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env
-
-# Start development server
-npm run dev
-```
-
-## 🏗️ Architecture
-High-level architecture diagram and explanation of system components.
-
-## 🧪 Testing
-```bash
-# Run unit tests
-npm test
-
-# Run integration tests
-npm run test:integration
-
-# Check code coverage
-npm run test:coverage
-```
-
-## 📚 API Documentation
-Link to API documentation (Swagger, Postman collection, etc.)
-
-## 🤝 Contributing
-Guidelines for contributing to the project.
-
-## 📄 License
-MIT License - see LICENSE file for details.
+const std::vector<std::string> projectReadmeTemplate = {
+    "# Project README Template",
+    "",
+    "## 🚀 Project Name",
+    "Brief description of what the project does and why it's useful.",
+    "",
+    "## ✨ Features",
+    "- Feature 1 with brief explanation",
+    "- Feature 2 with brief explanation",
+    "- Feature 3 with brief explanation",
+    "",
+    "## 🛠️ Tech Stack",
+    "- **Frontend**: React, TypeScript, Tailwind CSS",
+    "- **Backend**: Node.js, Express, MongoDB",
+    "- **Deployment**: AWS EC2, Docker, Nginx",
+    "",
+    "## 📋 Prerequisites",
+    "- Node.js 16+",
+    "- MongoDB 4.4+",
+    "- Docker (optional)",
+    "",
+    "## 🚀 Quick Start",
+    "```bash",
+    "# Clone repository",
+    "git clone https://github.com/username/project-name.git",
+    "",
+    "# Install dependencies",
+    "npm install",
+    "",
+    "# Set up environment variables",
+    "cp .env.example .env",
+    "",
+    "# Start development server",
+    "npm run dev",
+    "```",
+    "",
+    "## 🏗️ Architecture",
+    "High-level architecture diagram and explanation of system components.",
+    "",
+    "## 🧪 Testing",
+    "```bash",
+    "# Run unit tests",
+    "npm test",
+    "",
+    "# Run integration tests",
+    "npm run test:integration",
+    "",
+    "# Check code coverage",
+    "npm run test:coverage",
+    "```",
+    "",
+    "## 📚 API Documentation",
+    "Link to API documentation (Swagger, Postman collection, etc.)",
+    "",
+    "## 🤝 Contributing",
+    "Guidelines for contributing to the project.",
+    "",
+    "## 📄 License",
+    "MIT License - see LICENSE file for details."
+};
 ```
 
 #### **⏱️ Time Allocation**: 4-6 weeks for preparation, ongoing for projects
@@ -2119,22 +2495,32 @@ MIT License - see LICENSE file for details.
 - **Miro**: Team brainstorming and design
 
 #### **Development Tools**
-```bash
-# Essential Development Setup
-# Code Editor
-- Visual Studio Code (free, extensive extensions)
-- IntelliJ IDEA (Java development)
-- PyCharm (Python development)
+```cpp
+#include <string>
+#include <vector>
 
-# Terminal Enhancement
-- Oh My Zsh (shell enhancement)
-- Homebrew (macOS package manager)
-- Windows Subsystem for Linux (WSL)
+struct ToolCategory {
+    std::string title;
+    std::vector<std::string> items;
+};
 
-# Browser Extensions
-- LeetCode Timer (track solving time)
-- GitHub File Icons (better repository navigation)
-- JSON Formatter (API response formatting)
+const std::vector<ToolCategory> developmentSetup = {
+    {"Code Editor", {
+        "Visual Studio Code (free, extensive extensions)",
+        "IntelliJ IDEA (Java development)",
+        "PyCharm (Python development)"
+    }},
+    {"Terminal Enhancement", {
+        "Oh My Zsh (shell enhancement)",
+        "Homebrew (macOS package manager)",
+        "Windows Subsystem for Linux (WSL)"
+    }},
+    {"Browser Extensions", {
+        "LeetCode Timer (track solving time)",
+        "GitHub File Icons (better repository navigation)",
+        "JSON Formatter (API response formatting)"
+    }}
+};
 ```
 
 ### **Books & References**
@@ -2227,8 +2613,10 @@ MIT License - see LICENSE file for details.
 ### **Tracking Progress & Assessment**
 
 #### **Progress Tracking Template**
-```markdown
-## Weekly Progress Report
+```cpp
+#include <string>
+
+const std::string weeklyProgressTemplate = R"(## Weekly Progress Report
 
 ### Problems Solved This Week
 - Easy: X problems
@@ -2248,7 +2636,7 @@ MIT License - see LICENSE file for details.
 ### Next Week Goals
 - Target: X problems
 - Focus areas: [List specific topics]
-- Mock interviews: X scheduled
+- Mock interviews: X scheduled)";
 ```
 
 #### **Skill Assessment Checkpoints**
